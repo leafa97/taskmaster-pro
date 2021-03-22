@@ -90,7 +90,9 @@ $(".list-group").on("click", "p", function() {
     .trim();
 
   // replace p element with a new textarea
-  var textInput = $("<textarea>").addClass("form-control").val(text);
+  var textInput = $("<textarea>")
+  .addClass("form-control")
+  .val(text);
   $(this).replaceWith(textInput);
 
   // auto focus new element
@@ -100,7 +102,9 @@ $(".list-group").on("click", "p", function() {
 // editable field was un-focused
 $(".list-group").on("blur", "textarea", function() {
   // get current value of textarea
-  var text = $(this).val();
+  var text = $(this)
+  .val()
+  .trim();
 
   // get status type and position in the list
   var status = $(this)
@@ -144,7 +148,9 @@ $(".list-group").on("click", "span", function() {
 
 // value of due date was changed
 $(".list-group").on("blur", "input[type='text']", function() {
-  var date = $(this).val();
+  var date = $(this)
+  .val()
+  .trim();
 
   // get status type and position in the list
   var status = $(this)
