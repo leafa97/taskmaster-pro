@@ -1,5 +1,6 @@
 var tasks = {};
 
+
 var createTask = function(taskText, taskDate, taskList) {
   // create elements that make up a task item
   var taskLi = $("<li>").addClass("list-group-item");
@@ -9,13 +10,36 @@ var createTask = function(taskText, taskDate, taskList) {
   var taskP = $("<p>")
     .addClass("m-1")
     .text(taskText);
-
+    
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
+
+  //check due date
+  auditTask(taskLi);
 
 
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
+};
+
+var auditTask = function(taskEl) {
+  //get date from task element
+  var date = $(taskEl).find("span").text().trim();
+
+  //convert to moment object at 5:00pm
+  var time = moment(date, "L").set("hour", 17);
+
+
+//remove any old classes from element
+$(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+
+//aply new class if over due
+if (moment().isAfter(time)) {
+  $(taskEl).addClass("list-group-item-danger");
+}
+else if (Math.abs(moment().diff(time, "days")) <=2) {
+  $(taskEl).addClass("list-group-item-warning");
+}
 };
 
 var loadTasks = function() {
@@ -147,11 +171,32 @@ $(".list-group").on("click", "span", function() {
 });
 
 // value of due date was changed
-$(".list-group").on("blur", "input[type='text']", function() {
+$(".list-group").on("change", "input[type='text']", function() {
   var date = $(this)
   .val()
   .trim();
+//add calender when editing date
 
+$(".list-group").on("click", "span", function() {
+  // get current text
+  var date = $(this).text().trim();
+
+  // create new input element
+  var dateInput = $("<input>").attr("type", "text").addClass("form-control").val(date);
+
+  $(this).replaceWith(dateInput);
+
+  // enable jquery ui datepicker
+  dateInput.datepicker({
+    minDate: 1,
+    onClose: function() {
+      $(this).trigger("change");
+    }
+  });
+
+  // automatically bring up the calendar
+  dateInput.trigger("focus");
+});
   // get status type and position in the list
   var status = $(this)
     .closest(".list-group")
@@ -251,3 +296,8 @@ $("#trash").droppable({
   }
   
 });
+
+$("#modalDueDate").datepicker({
+  minDate: 1
+});
+
