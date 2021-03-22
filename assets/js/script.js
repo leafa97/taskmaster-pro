@@ -71,7 +71,7 @@ $("#task-form-modal .btn-primary").click(function() {
 
     // close modal
     $("#task-form-modal").modal("hide");
-
+    
     // save in tasks array
     tasks.toDo.push({
       text: taskText,
