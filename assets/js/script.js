@@ -29,15 +29,14 @@ var auditTask = function(taskEl) {
   //convert to moment object at 5:00pm
   var time = moment(date, "L").set("hour", 17);
 
+  //remove any old classes from element
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
 
-//remove any old classes from element
-$(taskEl).removeClass("list-group-item-warning list-group-item-danger");
-
-//aply new class if over due
-if (moment().isAfter(time)) {
+  //aply new class if over due
+  if (moment().isAfter(time)) {
   $(taskEl).addClass("list-group-item-danger");
-}
-else if (Math.abs(moment().diff(time, "days")) <=2) {
+  }
+  else if (Math.abs(moment().diff(time, "days")) <=2) {
   $(taskEl).addClass("list-group-item-warning");
 }
 };
@@ -215,6 +214,22 @@ $(".list-group").on("click", "span", function() {
     .addClass("badge badge-primary badge-pill")
     .text(date);
     $(this).replaceWith(taskSpan);
+
+    $(".list-group").on("change", "input[type='text']", function() {
+      var date = $(this).val();
+    
+      var status = $(this).closest(".list-group").attr("id").replace("list-", "");
+      var index = $(this).closest(".list-group-item").index();
+    
+      tasks[status][index].date = date;
+      saveTasks();
+    
+      var taskSpan = $("<span>").addClass("badge badge-primary badge-pill").text(date);
+      $(this).replaceWith(taskSpan);
+    
+      // Pass task's <li> element into auditTask() to check new due date
+      auditTask($(taskSpan).closest(".list-group-item"));
+    });
 });
 
 // remove all tasks
